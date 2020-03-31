@@ -6,4 +6,6 @@ python3 -m pip install --upgrade pip
 python3 -m pip install flask
 python3 -m pip install pymysql
 
+cat database.sql | mysql -u root -p
+
 ./run.py &
