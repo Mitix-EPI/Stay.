@@ -1,4 +1,6 @@
-#!/home/alexandre/EPITECH/Tek1/WEB/Bootstrap/test/bin/python
+#!/bin/sh
+'''exec' "/home/alexandre/Blih est cassé/Rester-Chez-Soi/bin/python" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys
