@@ -8,9 +8,10 @@
 		<!-- <script type="text/javascript" src='../static/js/index.js'> </script> -->
 	</head>
 	<body class="loggedin">
+		<audio id="sound" src="../static/assets/oof_sound.mp3" preload="auto"></audio>
 		<script src="{{ url_for('static', filename='../static/js/index.js') }}"></script>
 		<script>
-			var time = {{ timer|tojson}}
+			var time = {{ timer|tojson}};
 			refreshData(time);
 			// window.setInterval(myPopUp({{ timer|tojson }}), 5000);
 		</script>

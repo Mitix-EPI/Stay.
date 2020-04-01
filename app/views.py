@@ -119,8 +119,8 @@ def set_timer(join_date, timer):
     elif timer == "NULL":
         time = datetime.now()
         tmp = timedelta(hours=randint(0, 2), minutes=randint(0, 30))
-        if tmp.hours == 0 and tmp.minutes < 30:
-            tmp.minutes = 30
+        if tmp.seconds < 1800: # Equivalent de 30 minutes en secondes
+            tmp = timedelta(minutes=30)
         time += tmp
         if time.hour < 8 or time.hour >= 18:
             return "NULL", join_date # 18h passé et les popups s'arrêtent à 18h
@@ -131,21 +131,24 @@ def set_timer(join_date, timer):
         timer_split = timer.split(":")
         date_join_split = join_date.split(" ")
         date_hour = date_join_split[1].split(":")
+        now_timer = [datetime.now().hour, datetime.now().minute]
         del date_join_split
 
-        if int(timer_split[0]) <= int(date_hour[0]):
-            if int(timer_split[1]) <= int(date_hour[1]) and int(date_hour[1]) - int(timer_split[1]) <= 10: # Temps dépassé
+        if int(timer_split[0]) <= int(now_timer[0]):
+            print(str(int(now_timer[1]) - int(timer_split[1])))
+            print(str(int(timer_split[1])) + ' | h: ' + str(int(now_timer[0])) + ' | m: ' + str(int(now_timer[1])))
+            if int(timer_split[1]) <= int(now_timer[1]) and int(now_timer[1]) - int(timer_split[1]) <= 10: # Temps dépassé
                 time = datetime.now()
                 tmp = timedelta(hours=randint(0, 2), minutes=randint(0, 30))
-                if tmp.hours == 0 and tmp.minutes < 30:
-                    tmp.minutes = 30
+                if tmp.seconds < 1800: # Equivalent de 30 minutes en secondes
+                    tmp = timedelta(minutes=30)
                 time += tmp
                 if time.hour < 8 or time.hour >= 18:
                     return "NULL", join_date # 18h passé et les popups s'arrêtent à 18h
                 else:
                     text = str(time.hour) + ":" + str(time.minute)
                     return text, join_date
-            elif int(timer_split[1]) <= int(date_hour[1]) and int(date_hour[1]) - int(timer_split[1]) > 10: # Temps dépassé mais plus de 10 min
+            elif int(timer_split[1]) <= int(now_timer[1]) and int(now_timer[1]) - int(timer_split[1]) > 10: # Temps dépassé mais plus de 10 min
                 return "NULL", "NULL"
             else:
                 return timer, join_date
@@ -178,8 +181,8 @@ def signin():
             session['mail'] = account[3]
             session['day'] = account[5]
             timer, tmp = set_timer(tmp, timer)
-            session['date'] = "01/04/2020 08:30"
-            session['timer'] = "19:58"
+            session['date'] = tmp #"01/04/2020 08:30"
+            session['timer'] = timer # "23:42"
             print(session['timer'] + " heure popup")
             return (redirect(url_for('home')))
         else:

@@ -6,6 +6,7 @@ function myPopUp(timer) {
     console.log(date);
     console.log(timer);
     if (date == timer) {
+        document.getElementById('sound').play();
         if (alert("Validation de Présence")) {}
         else {
             window.location.reload();
@@ -17,7 +18,7 @@ function refreshData(timer)
 {
     x = 40;
     myPopUp(timer);
-    setInterval(refreshData, x * 1000);
+    setInterval(function() {myPopUp(timer);}, x * 1000);
 }
 
 // console.log(timer);
