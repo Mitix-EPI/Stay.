@@ -1,6 +1,4 @@
-#!/bin/sh
-'''exec' "/home/alexandre/Blih est cassé/Rester-Chez-Soi/bin/python" "$0" "$@"
-' '''
+#!/home/cyriluri/Epitech/IONIS_FINISHER/Rester-Chez-Soi/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

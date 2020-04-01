@@ -117,10 +117,10 @@ def set_timer(join_date, timer):
             tmp.minutes = 30
         time += tmp
         if time.hour < 8 or time.hour >= 18:
-            return ("NULL") # 18h passé et les popups s'arrêtent à 18h
+            return "NULL", join_date # 18h passé et les popups s'arrêtent à 18h
         else:
             text = str(time.hour) + ":" + str(time.minute)
-            return (text)
+            return text, join_date
     else:
         timer_split = timer.split(":")
         date_join_split = join_date.split(" ")
@@ -128,7 +128,7 @@ def set_timer(join_date, timer):
         del date_join_split
 
         if int(timer_split[0]) <= int(date_hour[0]):
-            if int(timer_split[1]) <= int(date_hour[1]): # Temps dépassé
+            if int(timer_split[1]) <= int(date_hour[1]) and int(date_hour[1]) - int(timer_split[1]) <= 10: # Temps dépassé
                 time = datetime.now()
                 tmp = timedelta(hours=randint(0, 2), minutes=randint(0, 30))
                 if tmp.hours == 0 and tmp.minutes < 30:
@@ -138,12 +138,14 @@ def set_timer(join_date, timer):
                     return ("NULL") # 18h passé et les popups s'arrêtent à 18h
                 else:
                     text = str(time.hour) + ":" + str(time.minute)
-                    return (text)
+                    return text, join_date
+            elif int(timer_split[1]) <= int(date_hour[1]) and int(date_hour[1]) - int(timer_split[1]) > 10: # Temps dépassé mais plus de 10 min
+                return "NULL", "NULL"
             else:
-                return (timer)
+                return timer, join_date
         else:
-            return (timer)
-    return (timer)
+            return timer, join_date
+    return timer, join_date
 
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
@@ -169,8 +171,9 @@ def signin():
             session['username'] = account[1]
             session['mail'] = account[3]
             session['day'] = account[4]
+            timer, tmp = set_timer(tmp, timer)
             session['time'] = tmp
-            session['timer'] = set_timer(tmp, timer)
+            session['timer'] = timer
             return (redirect(url_for('home')))
         else:
             msg = 'Incorrect username/password!'
