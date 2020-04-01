@@ -8,4 +8,4 @@ python3 -m pip install pymysql
 
 cat database.sql | mysql -u root -p
 
-./run.py
+./run.py    

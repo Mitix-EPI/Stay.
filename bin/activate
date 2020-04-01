@@ -46,7 +46,11 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
+<<<<<<< HEAD
 VIRTUAL_ENV='/home/alexandre/GITHUB/Stay.'
+=======
+VIRTUAL_ENV='/home/cyriluri/Epitech/IONIS_FINISHER/Rester-Chez-Soi'
+>>>>>>> 8f4415657912c1b7682b6ed62feed65b2a93dc4b
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
