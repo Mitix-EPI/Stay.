@@ -28,11 +28,7 @@ def _deactivate(args):
 _deactivate(["nondestructive"])
 aliases["deactivate"] = _deactivate
 
-<<<<<<< HEAD
 $VIRTUAL_ENV = r"/home/alexandre/GITHUB/Stay."
-=======
-$VIRTUAL_ENV = r"/home/cyriluri/Epitech/IONIS_FINISHER/Rester-Chez-Soi"
->>>>>>> 8f4415657912c1b7682b6ed62feed65b2a93dc4b
 
 $_OLD_VIRTUAL_PATH = $PATH
 $PATH = $PATH[:]

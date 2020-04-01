@@ -28,13 +28,18 @@ def profile():
         cursor.execute('SELECT * FROM user WHERE id = %s', [session['id']])
         account = cursor.fetchone()
         return render_template('profile.html', account=account)
-    else :
+    else:
         return redirect(url_for('signin'))
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     if 'loggedin' in session:
-        return render_template('home.html', username=session['username'], day=session['day'])
+        print("Timer : " + str(session['timer']))
+        timer, date = set_timer(session['date'], session['timer'])
+        session['date'] = date
+        session['timer'] = timer
+        print(str(timer) + " et " + str(date))
+        return render_template('home.html', username=session['username'], day=session['day'], timer=session['timer'])
     else:
         return redirect(url_for('signin'))
 
@@ -108,8 +113,9 @@ def set_timer(join_date, timer):
     # qui ont suivi la pop-up pour mettre le jour en fail
     # Penser donc à 18h à ajouter 1 jour à tous les users qui ont donc la date de première connexion != NULL
 
+    print("Je rentre")
     if join_date == "NULL":
-        return ("NULL")
+        return "NULL", "NULL"
     elif timer == "NULL":
         time = datetime.now()
         tmp = timedelta(hours=randint(0, 2), minutes=randint(0, 30))
@@ -135,7 +141,7 @@ def set_timer(join_date, timer):
                     tmp.minutes = 30
                 time += tmp
                 if time.hour < 8 or time.hour >= 18:
-                    return ("NULL") # 18h passé et les popups s'arrêtent à 18h
+                    return "NULL", join_date # 18h passé et les popups s'arrêtent à 18h
                 else:
                     text = str(time.hour) + ":" + str(time.minute)
                     return text, join_date
@@ -165,15 +171,16 @@ def signin():
         cursor.execute("""SELECT * FROM user WHERE (username = %s OR mail = %s) AND password = %s""", (username, username, password))
         account = cursor.fetchone()
         if (account):
-            tmp, timer = check_date(datetime.now(), account[5], account[6])
+            tmp, timer = check_date(datetime.now(), account[6], account[7])
             session['loggedin'] = True
             session['id'] = account[0]
             session['username'] = account[1]
             session['mail'] = account[3]
-            session['day'] = account[4]
+            session['day'] = account[5]
             timer, tmp = set_timer(tmp, timer)
-            session['time'] = tmp
-            session['timer'] = timer
+            session['date'] = "01/04/2020 08:30"
+            session['timer'] = "19:58"
+            print(session['timer'] + " heure popup")
             return (redirect(url_for('home')))
         else:
             msg = 'Incorrect username/password!'
@@ -217,7 +224,7 @@ def register():
             msg = "Account already exists"
         else :
             day = 0
-            cursor.execute("INSERT INTO %s (username, password, mail, ip, day) VALUES ('%s', '%s', '%s', '%s', '%d')" % ("user", username, password, mail, str(new_ip), int(day)))
+            cursor.execute("INSERT INTO %s (username, password, mail, ip, day, date, timer) VALUES ('%s', '%s', '%s', '%s', '%d', '%s', '%s')" % ("user", username, password, mail, str(new_ip), int(day), "NULL", "NULL"))
             connect.commit()
             msg = "Account Created perfectly !"
             print("Envoie de la donnée à la DB")
