@@ -8,6 +8,11 @@
  * Copyright (c) 2019 Daniel Eden
  */
 
+header {
+  background-image: url('img/logo+slogan.png');
+  background-repeat: no-repeat;
+  }
+
 @-webkit-keyframes bounce {
   from,
   20%,
