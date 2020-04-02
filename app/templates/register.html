@@ -2,22 +2,22 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Register</title>
+		<title>Stay. - Inscription</title>
 		<link rel="stylesheet" href="../static/css/register.css">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
 	</head>
 	<body>
 		<div class="register">
-			<h1>Register</h1>
+			<h1>Inscription</h1>
 			<div class="links">
-				<a href="{{ url_for('signin') }}">Login</a>
-				<a href="{{ url_for('register') }}" class="active">Register</a>
+				<a href="{{ url_for('signin') }}">Connexion</a>
+				<a href="{{ url_for('register') }}" class="active">Inscription</a>
 			</div>
 			<form action="{{ url_for('register') }}" method="post" autocomplete="off">
 				<label for="username">
 					<i class="fas fa-user"></i>
 				</label>
-				<input type="text" name="username" placeholder="Username" id="username" required>
+				<input type="text" name="username" placeholder="Identifiant" id="username" required>
 				<label for="mail">
 					<i class="fas fa-envelope"></i>
 				</label>
@@ -25,9 +25,9 @@
 				<label for="password">
 					<i class="fas fa-lock"></i>
 				</label>
-				<input type="password" name="password" placeholder="Password" id="password" required>
+				<input type="password" name="password" placeholder="Mot de passe" id="password" required>
 				<div class="msg">{{ msg }}</div>
-				<input type="submit" value="Register">
+				<input type="submit" value="S'inscrire">
 			</form>
 		</div>
 	</body>

@@ -15,35 +15,96 @@ def index():
     session.pop('username', None)
     return render_template('index.html')
 
-@app.route('/profile', methods=['GET', 'POST'])
-def profile():
-    print(session)
+@app.route('/boutique', methods=['GET', 'POST'])
+def boutique():
     if ('loggedin' in session):
+        timer, date = set_timer(session['date'], session['timer'])
+        set_player_info(timer, date)
+        session['date'] = date
+        session['timer'] = timer
         connect = sql.connect(host ="localhost",
                                 user ='root',
                                 passwd ='root@123',
                                 db ='stay'
                                 )
         cursor = connect.cursor()
-        cursor.execute('SELECT * FROM user WHERE id = %s', [session['id']])
+        cursor.execute("SELECT * FROM user WHERE user_id = '%s'" % ([session['id']]))
         account = cursor.fetchone()
-        return render_template('profile.html', account=account)
+        return render_template('boutique.html', account=account, timer=session['timer'])
+    else:
+        return redirect(url_for('signin'))
+
+@app.route('/how', methods=['GET', 'POST'])
+def how():
+    return render_template('how.html', timer="NULL")
+
+@app.route('/comment', methods=['GET', 'POST'])
+def comment():
+    # print(session)
+    if ('loggedin' in session):
+        timer, date = set_timer(session['date'], session['timer'])
+        session['date'] = date
+        session['timer'] = timer
+        set_player_info(session['date'], session['timer'], session['day'])
+        connect = sql.connect(host ="localhost",
+                                user ='root',
+                                passwd ='root@123',
+                                db ='stay'
+                                )
+        cursor = connect.cursor()
+        cursor.execute("SELECT * FROM user WHERE user_id = '%s'" % ([session['id']]))
+        account = cursor.fetchone()
+        return render_template('comment.html', account=account, timer=session['timer'])
+    else:
+        return redirect(url_for('signin'))
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    print(session)
+    msg=""
+    if ('loggedin' in session):
+        timer, date = set_timer(session['date'], session['timer'])
+        session['date'] = date
+        session['timer'] = timer
+        set_player_info(session['date'], session['timer'], session['day'])
+        connect = sql.connect(host ="localhost",
+                                user ='root',
+                                passwd ='root@123',
+                                db ='stay'
+                                )
+        cursor = connect.cursor()
+        cursor.execute("SELECT * FROM user WHERE user_id = '%s'" % ([session['id']]))
+        account = cursor.fetchone()
+        print("on est avant là")
+        print(request.form)
+        if (request.method == 'POST' and 'password' in request.form and 'password_confirmation' in request.form and 'submit' in request.form):
+            print("on est là")
+            new_password = request.form['password']
+            confirm_password = request.form['password_confirmation']
+            if (new_password == confirm_password):
+                cursor.execute("SELECT * FROM user WHERE user_id = '%s'" % (str(session['id'])))
+                cursor.execute("UPDATE user SET password = '%s'" % (new_password))
+                connect.commit()
+                msg = "New Password Set !"
+                return redirect(url_for('index'))
+            else:
+                msg = "This is not the same password"
+        return render_template('profile.html', account=account, timer=session['timer'], name=session['username'], mail=session['mail'], msg=msg)
     else:
         return redirect(url_for('signin'))
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     if 'loggedin' in session:
-        print("Timer : " + str(session['timer']))
         timer, date = set_timer(session['date'], session['timer'])
         session['date'] = date
         session['timer'] = timer
-        print(str(timer) + " et " + str(date))
-        return render_template('home.html', username=session['username'], day=session['day'], timer=session['timer'])
+        set_player_info(session['date'], session['timer'], session['day'])
+        return render_template('home.html', day=str(int(session['day']) * 10), timer=session['timer'])
     else:
         return redirect(url_for('signin'))
 
-def check_date(date, value, timer): # Format date: YYYY/MM/JJ HH:MM
+def check_date(date, value, timer, day): # Format date: YYYY/MM/JJ HH:MM
 
     # Cette fonction permet de récupérer la date de première connexion, pour ce faire on vérifie si
     # la date sans compter l'heure, la minute et plus petit est supérieure à la date précédemment entrée
@@ -61,15 +122,18 @@ def check_date(date, value, timer): # Format date: YYYY/MM/JJ HH:MM
         actual_hour = [int(date.hour), int(date.minute)]
 
         if actual_hour[0] >= 8 and actual_hour[0] <= 9:
-            return new_possible_date, "NULL"
+            return new_possible_date, "NULL", day
         elif actual_hour[0] == 10:
             if actual_hour[1] <= 30:
-                return new_possible_date, "NULL"
+                return new_possible_date, "NULL", day
             else:
-                return "NULL", "NULL" # Plus tard que 10h30
+                return "NULL", "NULL", day # Plus tard que 10h30
         else:
-            return "NULL", "NULL" # Plus tard que 10h30
+            return "NULL", "NULL", day # Plus tard que 10h30
     else: # Si il n'avait pas raté le jour
+        temp = int(day)
+        temp += 1
+        day = temp
         tmp = value.split(" ")
         date_tmp = tmp[0].split("/")
         hour_tmp = tmp[1].split(":")
@@ -89,17 +153,17 @@ def check_date(date, value, timer): # Format date: YYYY/MM/JJ HH:MM
                 break
         if is_diff:
             if actual_hour[0] >= 8 and actual_hour[0] <= 9:
-                return new_possible_date, "NULL"
+                return new_possible_date, "NULL", day
             elif actual_hour[0] == 10:
                 if actual_hour[1] <= 30:
-                    return new_possible_date, "NULL"
+                    return new_possible_date, "NULL", day
                 else:
-                    return "NULL", "NULL" # Plus tard que 10h30
+                    return "NULL", "NULL", day # Plus tard que 10h30
             else:
-                return "NULL", "NULL" # Plus tard que 10h30
+                return "NULL", "NULL", day # Plus tard que 10h30
         else:
-            return value, timer
-    return "NULL", "NULL" # Si error
+            return value, timer, day
+    return "NULL", "NULL", day # Si error
 
 def set_timer(join_date, timer):
 
@@ -156,6 +220,17 @@ def set_timer(join_date, timer):
             return timer, join_date
     return timer, join_date
 
+def set_player_info(date, timer, day):
+    connect = sql.connect(host ="localhost",
+                                user ='root',
+                                passwd ='root@123',
+                                db ='stay'
+                                )
+    cursor = connect.cursor()
+    cursor.execute("SELECT * FROM user WHERE user_id = '%s'" % (str(session['id'])))
+    cursor.execute("UPDATE user SET date = '%s',timer = '%s',day = '%d'" % (date, timer, int(day))) # Problem here
+    connect.commit()
+
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
     msg = ''
@@ -174,15 +249,16 @@ def signin():
         cursor.execute("""SELECT * FROM user WHERE (username = %s OR mail = %s) AND password = %s""", (username, username, password))
         account = cursor.fetchone()
         if (account):
-            tmp, timer = check_date(datetime.now(), account[6], account[7])
+            tmp, timer, day = check_date(datetime.now(), account[6], account[7], account[5])
             session['loggedin'] = True
             session['id'] = account[0]
             session['username'] = account[1]
             session['mail'] = account[3]
-            session['day'] = account[5]
+            session['day'] = day
             timer, tmp = set_timer(tmp, timer)
-            session['date'] = tmp #"01/04/2020 08:30"
-            session['timer'] = timer # "23:42"
+            session['date'] = "01/04/2020 08:30"
+            session['timer'] = "20:20"
+            set_player_info(session['date'], session['timer'], session['day'])
             print(session['timer'] + " heure popup")
             return (redirect(url_for('home')))
         else:
@@ -226,7 +302,7 @@ def register():
         elif (account):
             msg = "Account already exists"
         else :
-            day = 0
+            day = 1
             cursor.execute("INSERT INTO %s (username, password, mail, ip, day, date, timer) VALUES ('%s', '%s', '%s', '%s', '%d', '%s', '%s')" % ("user", username, password, mail, str(new_ip), int(day), "NULL", "NULL"))
             connect.commit()
             msg = "Account Created perfectly !"
