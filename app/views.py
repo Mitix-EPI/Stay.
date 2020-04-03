@@ -257,7 +257,7 @@ def signin():
             session['day'] = day
             timer, tmp = set_timer(tmp, timer)
             session['date'] = "03/04/2020 08:30"
-            session['timer'] = "11:37"
+            session['timer'] = "17:29"       #CHANGE TA GRAMS
             set_player_info(session['date'], session['timer'], session['day'])
             print(session['timer'] + " heure popup")
             return (redirect(url_for('home')))
