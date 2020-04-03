@@ -19,9 +19,9 @@ def index():
 def boutique():
     if ('loggedin' in session):
         timer, date = set_timer(session['date'], session['timer'])
-        set_player_info(timer, date)
         session['date'] = date
         session['timer'] = timer
+        set_player_info(session['date'], session['timer'], session['day'])
         connect = sql.connect(host ="localhost",
                                 user ='root',
                                 passwd ='root@123',
@@ -131,9 +131,6 @@ def check_date(date, value, timer, day): # Format date: YYYY/MM/JJ HH:MM
         else:
             return "NULL", "NULL", day # Plus tard que 10h30
     else: # Si il n'avait pas raté le jour
-        temp = int(day)
-        temp += 1
-        day = temp
         tmp = value.split(" ")
         date_tmp = tmp[0].split("/")
         hour_tmp = tmp[1].split(":")
@@ -152,6 +149,9 @@ def check_date(date, value, timer, day): # Format date: YYYY/MM/JJ HH:MM
                 is_diff = True
                 break
         if is_diff:
+            temp = int(day)
+            temp += 1
+            day = temp
             if actual_hour[0] >= 8 and actual_hour[0] <= 9:
                 return new_possible_date, "NULL", day
             elif actual_hour[0] == 10:
@@ -256,8 +256,8 @@ def signin():
             session['mail'] = account[3]
             session['day'] = day
             timer, tmp = set_timer(tmp, timer)
-            session['date'] = "01/04/2020 08:30"
-            session['timer'] = "20:20"
+            session['date'] = "03/04/2020 08:30"
+            session['timer'] = "11:37"
             set_player_info(session['date'], session['timer'], session['day'])
             print(session['timer'] + " heure popup")
             return (redirect(url_for('home')))
