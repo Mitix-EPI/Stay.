@@ -5,7 +5,7 @@ Stay. is a project launch by Ionis Students to improve people's lives during loc
 ***Students***
 
 :computer: *Developers* :computer:
-* JUAN       Alexandre
+* JUAN       Alexandre (Developer Leader)
 * LALANDE    Alexis
 * LITOT      Mattis
 * AFFRE      Johan
@@ -13,6 +13,6 @@ Stay. is a project launch by Ionis Students to improve people's lives during loc
 * GADBIN     Gadbin
 
 :art: *Designers* :art:
+* LOURENÇO   Sarah (Designer Leader)
 * NADEAU     Benjamin
-* LOURENÇO   Sarah
 
