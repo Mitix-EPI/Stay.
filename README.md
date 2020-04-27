@@ -16,6 +16,12 @@ Stay. is a project launch by Ionis Students to improve people's lives during loc
 * LOURENÇO   Sarah (Designer Leader)
 * NADEAU     Benjamin
 
-# Presentation
+# Explainer
 
 ![](images/presentation.gif)
+
+[Video link](https://www.youtube.com/watch?v=aTBlVTrDL4U&feature=youtu.be)
+
+USAGE:
+
+    ./run.py
