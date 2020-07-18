@@ -10,7 +10,7 @@ Stay. is a project launch by Ionis Students to improve people's lives during loc
 * LITOT      Mattis
 * AFFRE      Johan
 * GROSJEAN   Cyril
-* GADBIN     Gadbin
+* GADBIN     Arnaud
 
 :art: *Designers* :art:
 * LOURENÇO   Sarah (Designer Leader)
